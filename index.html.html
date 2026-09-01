@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>For Chané ✨</title>
+  
+  <!-- Google Fonts: Cormorant Garamond, Italianno & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400;1,600&family=Italianno&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Canvas Confetti CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            serif: ['"Cormorant Garamond"', 'Georgia', 'serif'],
+            script: ['"Italianno"', 'cursive'],
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          },
+          colors: {
+            noir: '#080204',
+            burgundy: {
+              950: '#0f0206',
+              900: '#1a040b',
+              800: '#2b0714',
+              700: '#460d21',
+              600: '#681331',
+              500: '#8c1a43',
+            },
+            champagne: {
+              DEFAULT: '#d8b14a',
+              light: '#fbf0cd',
+              glow: '#e8c872',
+              dark: '#9a7a24',
+            },
+            blush: {
+              50: '#fff5f7',
+              100: '#ffebf0',
+              200: '#ffd0dc',
+              300: '#ffa6bd',
+              400: '#f77395',
+            }
+          },
+          animation: {
+            'fade-in': 'fadeIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+            'float-slow': 'float 7s ease-in-out infinite',
+            'pulse-subtle': 'pulseSubtle 4s ease-in-out infinite',
+            'shimmer-glow': 'shimmer 3s ease infinite',
+            'spin-slow': 'spin 18s linear infinite',
+          },
+          keyframes: {
+            fadeIn: {
+              '0%': { opacity: '0', transform: 'translateY(16px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' },
+            },
+            float: {
+              '0%, 100%': { transform: 'translateY(0px) rotate(0deg)' },
+              '50%': { transform: 'translateY(-8px) rotate(1deg)' },
+            },
+            pulseSubtle: {
+              '0%, 100%': { opacity: '0.4', transform: 'scale(1)' },
+              '50%': { opacity: '0.75', transform: 'scale(1.04)' },
+            },
+            shimmer: {
+              '0%': { backgroundPosition: '-200% 0' },
+              '100%': { backgroundPosition: '200% 0' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #080204;
+      color: #fdfbf7;
+      overflow-x: hidden;
+    }
+    
+    /* Modern Luxury Glassmorphism */
+    .glass-panel {
+      background: radial-gradient(130% 120% at 50% 0%, rgba(43, 7, 20, 0.72) 0%, rgba(15, 2, 6, 0.88) 100%);
+      backdrop-filter: blur(22px);
+      -webkit-backdrop-filter: blur(22px);
+      border: 1px solid rgba(216, 177, 74, 0.22);
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.8), 0 0 40px rgba(216, 177, 74, 0.07);
+    }
+    
+    .glass-option {
+      background: rgba(35, 6, 17, 0.5);
+      border: 1px solid rgba(255, 208, 220, 0.12);
+      transition: all 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+    
+    .glass-option:hover {
+      background: rgba(70, 13, 33, 0.65);
+      border-color: rgba(216, 177, 74, 0.5);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 24px -6px rgba(216, 177, 74, 0.18);
+    }
+
+    .glass-option.selected {
+      background: linear-gradient(135deg, rgba(104, 19, 49, 0.9) 0%, rgba(43, 7, 20, 0.95) 100%);
+      border-color: rgba(216, 177, 74, 0.95);
+      box-shadow: 0 0 25px rgba(216, 177, 74, 0.25), inset 0 0 12px rgba(216, 177, 74, 0.12);
+      transform: translateY(-2px);
+    }
+
+    .gold-gradient-text {
+      background: linear-gradient(135deg, #fff4d4 0%, #e8c872 50%, #d8b14a 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .gold-shimmer-btn {
+      background: linear-gradient(135deg, #e8c872 0%, #d8b14a 45%, #b38b2b 100%);
+      background-size: 200% auto;
+      transition: all 0.35s ease;
+    }
+    .gold-shimmer-btn:hover {
+      background-position: right center;
+      box-shadow: 0 0 30px rgba(216, 177, 74, 0.5);
+    }
+
+    /* Custom range slider styling */
+    input[type=range] {
+      -webkit-appearance: none;
+      background: rgba(255, 208, 220, 0.15);
+      border-radius: 9999px;
+      height: 6px;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      height: 24px;
+      width: 24px;
+      border-radius: 50%;
+      background: #e8c872;
+      cursor: pointer;
+      box-shadow: 0 0 16px rgba(216, 177, 74, 0.9);
+      border: 2px solid #ffffff;
+      transition: transform 0.15s ease;
+    }
+    input[type=range]::-webkit-slider-thumb:hover {
+      transform: scale(1.18);
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: #080204; }
+    ::-webkit-scrollbar-thumb { background: #460d21; border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: #d8b14a; }
+  </style>
+</head>
+
+<body class="min-h-screen flex flex-col font-sans relative antialiased selection:bg-champagne/30 selection:text-white">
+
+  <!-- Ambient Particle Canvas -->
+  <canvas id="ambientCanvas" class="fixed inset-0 pointer-events-none z-0"></canvas>
+
+  <!-- Ambient Glowing Aura Orbs -->
+  <div class="fixed top-[-12%] left-[-10%] w-[60vw] h-[60vw] bg-burgundy-700/25 rounded-full blur-[140px] pointer-events-none z-0"></div>
+  <div class="fixed bottom-[-15%] right-[-10%] w-[65vw] h-[65vw] bg-burgundy-900/35 rounded-full blur-[150px] pointer-events-none z-0"></div>
+  <div class="fixed top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[45vw] h-[45vw] bg-champagne/5 rounded-full blur-[120px] pointer-events-none z-0"></div>
+
+  <!-- Audio Controls Floating Top Bar -->
+  <header class="fixed top-5 right-5 z-50">
+    <button id="audioToggleBtn" class="flex items-center gap-2.5 px-4 py-2 rounded-full glass-panel text-[11px] uppercase tracking-widest text-champagne-light hover:text-white border border-champagne/30 transition-all hover:border-champagne group shadow-lg">
+      <span class="w-2 h-2 rounded-full bg-champagne/70 group-hover:bg-champagne animate-ping" id="audioPing"></span>
+      <i class="fa-solid fa-volume-xmark text-sm transition-transform group-hover:scale-110" id="audioIcon"></i>
+      <span id="audioStatusText" class="font-medium">Music Off</span>
+    </button>
+  </header>
+
+  <!-- Top Left Aesthetic Tag -->
+  <div class="fixed top-5 left-5 z-40 hidden sm:flex items-center gap-2.5 px-3 py-1.5 rounded-full glass-panel border border-champagne/20 text-xs tracking-widest text-champagne/80">
+    <i class="fa-solid fa-sparkles text-champagne text-[11px]"></i>
+    <span class="font-serif italic tracking-wider">A little something for Chané</span>
+  </div>
+
+  <!-- Main Experience Wrapper -->
+  <main class="flex-1 flex items-center justify-center p-4 sm:p-6 md:p-8 relative z-10 my-auto">
+    <div class="w-full max-w-2xl mx-auto">
+      
+      <!-- ==================== VIEW 1: LANDING SCREEN ==================== -->
+      <section id="landingView" class="animate-fade-in flex flex-col items-center text-center">
+        <div class="glass-panel rounded-[2rem] p-8 sm:p-12 md:p-14 w-full relative overflow-hidden">
+          
+          <!-- Animated Top Emblem -->
+          <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-burgundy-800/80 border border-champagne/40 mb-7 shadow-lg animate-float-slow">
+            <i class="fa-solid fa-wine-glass text-champagne text-2xl"></i>
+          </div>
+
+          <p class="text-xs uppercase tracking-[0.35em] text-champagne font-medium mb-3">
+            Hey Chané
+          </p>
+          
+          <h1 class="font-serif text-4xl sm:text-5xl md:text-6xl font-normal leading-tight text-white mb-6">
+            Something a little different <br><span class="italic gold-gradient-text font-serif">than a normal text.</span>
+          </h1>
+          
+          <p class="text-slate-300 text-sm sm:text-base leading-relaxed max-w-lg mx-auto mb-10 font-light">
+            I had such a great time on our first date, so instead of just sending the usual WhatsApp, I figured I'd build you something fun instead. A few quick questions, a couple of laughs, and maybe an excuse to see you again soon.
+          </p>
+
+          <div class="flex flex-col items-center gap-3">
+            <button id="startExperienceBtn" class="gold-shimmer-btn text-noir font-bold px-10 py-4 rounded-full text-base tracking-wide flex items-center gap-3 shadow-xl hover:scale-105 active:scale-95 transition-all duration-300">
+              <span>Let’s do this</span>
+              <i class="fa-solid fa-arrow-right text-xs text-burgundy-950"></i>
+            </button>
+            <span class="text-[11px] text-zinc-400 tracking-wider font-light mt-1">Takes 3 minutes • No wrong answers</span>
+          </div>
+
+          <!-- Decorative ambient flares -->
+          <div class="absolute -top-10 -right-10 w-32 h-32 bg-champagne/10 rounded-full blur-2xl pointer-events-none"></div>
+          <div class="absolute -bottom-10 -left-10 w-32 h-32 bg-burgundy-500/20 rounded-full blur-2xl pointer-events-none"></div>
+        </div>
+      </section>
+
+      <!-- ==================== VIEW 2: QUESTIONNAIRE & INTERLUDES ==================== -->
+      <section id="questionnaireView" class="hidden animate-fade-in flex-col">
+        
+        <!-- Progress Header -->
+        <div class="mb-5 px-3 flex items-center justify-between">
+          <div class="flex items-center gap-2.5">
+            <span id="stepCounter" class="font-serif text-xl sm:text-2xl text-champagne italic font-semibold">01</span>
+            <span class="text-zinc-500 text-xs tracking-widest uppercase">/ <span id="totalStepsCount">22</span></span>
+          </div>
+          <div class="w-36 sm:w-52 bg-burgundy-950/90 rounded-full h-2 overflow-hidden border border-white/10 p-[1px]">
+            <div id="progressBar" class="bg-gradient-to-r from-burgundy-600 via-champagne to-champagne-light h-full rounded-full transition-all duration-500 ease-out w-0 shadow-[0_0_10px_rgba(216,177,74,0.6)]"></div>
+          </div>
+        </div>
+
+        <!-- Dynamic Content Card -->
+        <div id="cardContainer" class="glass-panel rounded-[2rem] p-6 sm:p-10 md:p-12 relative min-h-[440px] flex flex-col justify-between">
+          <!-- Dynamic injected content loads here -->
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="flex items-center justify-between mt-6 px-3">
+          <button id="prevBtn" class="text-xs uppercase tracking-widest text-zinc-400 hover:text-white px-4 py-2 rounded-full transition-colors flex items-center gap-2 disabled:opacity-0 disabled:pointer-events-none">
+            <i class="fa-solid fa-arrow-left text-[10px]"></i>
+            <span>Back</span>
+          </button>
+          
+          <button id="nextBtn" class="gold-shimmer-btn text-noir font-bold text-xs uppercase tracking-widest px-7 py-3.5 rounded-full transition-all flex items-center gap-2.5 hover:scale-105 active:scale-95 disabled:opacity-30 disabled:pointer-events-none shadow-lg">
+            <span id="nextBtnText">Continue</span>
+            <i class="fa-solid fa-arrow-right text-[10px]"></i>
+          </button>
+        </div>
+      </section>
+
+      <!-- ==================== VIEW 3: THE HEARTFELT REVEAL ==================== -->
+      <section id="revealView" class="hidden animate-fade-in flex-col items-center">
+        <div class="glass-panel rounded-[2rem] p-8 sm:p-12 md:p-14 w-full relative">
+          
+          <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-champagne/10 border border-champagne/30 text-champagne text-xs uppercase tracking-widest mb-6">
+            <i class="fa-solid fa-comment-dots"></i>
+            <span>Between us</span>
+          </div>
+
+          <h2 class="font-serif text-3xl sm:text-4xl md:text-5xl font-normal text-white mb-6 leading-tight">
+            I’m really glad we met, <br><span class="italic gold-gradient-text">Chané.</span>
+          </h2>
+
+          <div class="space-y-4 text-slate-200 text-sm sm:text-base font-light leading-relaxed mb-8">
+            <p>
+              I made this because I actually really enjoy talking to you. When I connect with someone cool, I like being straight up about it instead of acting nonchalant or playing guessing games.
+            </p>
+            <p>
+              I loved our first date—your laugh, your easygoing energy, and how dedicated you are to your work. It's rare to meet someone who is both ambitious and just genuinely fun to be around.
+            </p>
+            <p id="personalizedCallbackParagraph" class="text-champagne-light/95 italic font-serif text-base sm:text-lg border-l-2 border-champagne/60 pl-4 py-1.5 bg-burgundy-950/40 rounded-r-xl">
+              <!-- Dynamically populated from her choices -->
+            </p>
+          </div>
+
+          <button id="goToFinalQuestionBtn" class="w-full gold-shimmer-btn text-noir font-bold py-4 rounded-full text-xs sm:text-sm uppercase tracking-widest flex items-center justify-center gap-2.5 shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all">
+            <span>One quick question left</span>
+            <i class="fa-solid fa-arrow-right text-xs"></i>
+          </button>
+        </div>
+      </section>
+
+      <!-- ==================== VIEW 4: FINAL INVITATION ==================== -->
+      <section id="finalView" class="hidden animate-fade-in flex-col items-center text-center">
+        <div class="glass-panel rounded-[2rem] p-8 sm:p-12 md:p-14 w-full relative">
+          
+          <div class="w-16 h-16 rounded-full bg-burgundy-800 border border-champagne/40 mx-auto mb-6 flex items-center justify-center shadow-lg animate-pulse-subtle">
+            <i class="fa-solid fa-champagne-glasses text-champagne text-2xl"></i>
+          </div>
+
+          <p class="text-xs uppercase tracking-[0.25em] text-champagne mb-2 font-medium">So with that said...</p>
+          
+          <h2 class="font-serif text-3xl sm:text-5xl font-normal text-white mb-4 leading-tight">
+            Can I take you out on date number two?
+          </h2>
+
+          <p class="text-slate-300 text-xs sm:text-sm font-light mb-8 max-w-sm mx-auto">
+            Good food, good laughs, and continuing where we left off.
+          </p>
+
+          <div id="choiceButtons" class="flex flex-col sm:flex-row items-center justify-center gap-4 w-full max-w-sm mx-auto">
+            <button onclick="handleDateAnswer('Yes ❤️')" class="w-full sm:w-1/2 gold-shimmer-btn text-noir font-bold py-4 rounded-full text-sm sm:text-base tracking-wide flex items-center justify-center gap-2 shadow-xl hover:scale-105 active:scale-95 transition-all">
+              <span>I'm in</span>
+              <span>❤️</span>
+            </button>
+            <button onclick="handleDateAnswer('100% yes ✨')" class="w-full sm:w-1/2 bg-burgundy-700/80 hover:bg-burgundy-600 text-champagne-light border border-champagne/50 font-bold py-4 rounded-full text-sm sm:text-base tracking-wide flex items-center justify-center gap-2 shadow-xl hover:scale-105 active:scale-95 transition-all">
+              <span>100% yes</span>
+              <span>✨</span>
+            </button>
+          </div>
+
+          <!-- Final Celebration Card (Revealed after tap) -->
+          <div id="finalCelebrationCard" class="hidden animate-fade-in mt-8 pt-8 border-t border-champagne/25">
+            <div class="inline-flex items-center justify-center w-14 h-14 rounded-full bg-champagne/20 text-champagne mb-4 border border-champagne/40">
+              <i class="fa-solid fa-heart text-xl text-champagne"></i>
+            </div>
+            <h3 class="font-serif text-2xl sm:text-3xl font-medium text-white mb-3">
+              I was hoping you'd say that.
+            </h3>
+            <p class="text-slate-300 text-sm sm:text-base max-w-md mx-auto mb-6 font-light">
+              I'll sort out something great for us. Looking forward to it already.
+            </p>
+            
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
+              <button onclick="copySweetSummary()" id="copySummaryBtn" class="px-6 py-3.5 rounded-full bg-burgundy-800 text-xs font-semibold uppercase tracking-wider text-champagne-light border border-champagne/40 hover:border-champagne flex items-center gap-2.5 transition-all hover:bg-burgundy-700 shadow-md">
+                <i class="fa-regular fa-copy"></i>
+                <span id="copyBtnText">Copy your answers to send me</span>
+              </button>
+            </div>
+            
+            <div id="toastMessage" class="opacity-0 transition-opacity duration-300 text-xs text-champagne mt-3">
+              Copied! Send it through on WhatsApp ✨
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Footer Info -->
+  <footer class="text-center py-6 text-[11px] text-zinc-500 uppercase tracking-widest relative z-10">
+    <span>Made for Chané</span>
+  </footer>
+
+  <script>
+    /* ==========================================================
+       3. REFINED NATURAL QUESTIONNAIRE DATASET
+       ========================================================== */
+    const storyFlow = [
+      // STEP 1: Date Recap & Vibe
+      {
+        id: 'date_memory',
+        type: 'choice',
+        category: 'First Date Recap',
+        title: 'Looking back at our first date, what was your favorite part?',
+        subtitle: 'Be honest!',
+        options: [
+          { label: 'How easy the conversation flowed', icon: 'fa-comments' },
+          { label: 'How relaxed and natural it felt', icon: 'fa-feather' },
+          { label: 'Laughing at the same random things', icon: 'fa-face-laugh-beam' },
+          { label: 'Just catching your vibe in person', icon: 'fa-eye' }
+        ]
+      },
+
+      // STEP 2: The Coffee Ritual
+      {
+        id: 'coffee_ritual',
+        type: 'choice',
+        category: 'The Sacred Coffee/Tea Rule',
+        title: 'Since you’re super particular about your coffee & tea...',
+        subtitle: 'If I ever make you a cup, what’s the number one rule I cannot break?',
+        options: [
+          { label: 'Strong, smooth, zero excuses', icon: 'fa-bolt' },
+          { label: 'A very specific milk-to-sugar ratio only I know', icon: 'fa-cloud' },
+          { label: 'Hot tea brewed properly with care', icon: 'fa-mug-saucer' },
+          { label: 'You stay away from the kettle—I’m making it myself 😉', icon: 'fa-wand-magic-sparkles' }
+        ]
+      },
+
+      // STEP 3: Atmosphere check
+      {
+        id: 'atmosphere_choice',
+        type: 'binary',
+        category: 'Pick One',
+        title: 'Which setting wins every single time?',
+        subtitle: 'Go with your first instinct.',
+        optionA: { label: 'Sunset by the ocean 🌅', icon: 'fa-sun', tag: 'Ocean Sunset' },
+        optionB: { label: 'City skyline at night 🌃', icon: 'fa-city', tag: 'City Lights' }
+      },
+
+      // STEP 4: What brightens her world
+      {
+        id: 'small_joy',
+        type: 'text',
+        category: 'The Little Things',
+        title: 'What’s a small thing that instantly turns a tiring day around for you?',
+        subtitle: 'A good song, fresh air, a warm shower, laughing with someone...',
+        placeholder: 'Tell me in a short sentence...'
+      },
+
+      // STEP 5: Spontaneity Scale
+      {
+        id: 'spontaneity_level',
+        type: 'slider',
+        category: 'Your Pace',
+        title: 'How do you lean when it comes to plans?',
+        subtitle: 'Where do you fall on the slider?',
+        minLabel: 'Plan everything in advance 🗓️',
+        maxLabel: 'Just pack a bag and go 🚗',
+        defaultValue: 50
+      },
+
+      // STEP 6: INTERLUDE 1 (About Me: Grounded & Genuine)
+      {
+        id: 'interlude_1',
+        type: 'interlude',
+        tag: 'A quick thing about me',
+        title: 'I keep things straightforward.',
+        body: 'I’ve never been a fan of small talk or pretending to be someone I’m not. I keep my circle pretty tight, and if someone is in my corner, I’ve got their back 100%.',
+        icon: 'fa-shield-halved'
+      },
+
+      // STEP 7: Core Green Flag
+      {
+        id: 'green_flag',
+        type: 'choice',
+        category: 'Good Energy',
+        title: 'What’s an instant green flag in a guy for you?',
+        subtitle: 'The thing that immediately makes you respect him more.',
+        options: [
+          { label: 'Consistency: Actually doing what he says he’ll do', icon: 'fa-shield-check' },
+          { label: 'Staying calm under pressure and communicating well', icon: 'fa-heart-circle-check' },
+          { label: 'Having real drive and ambition without an ego', icon: 'fa-rocket' },
+          { label: 'Great humor and making you feel totally comfortable', icon: 'fa-face-laugh-wink' }
+        ]
+      },
+
+      // STEP 8: Deeper Values - Relationship Anchor
+      {
+        id: 'relationship_pillar',
+        type: 'choice',
+        category: 'What Matters',
+        title: 'When life gets busy or stressful, what keeps two people solid?',
+        subtitle: 'What do you value most in a partnership?',
+        options: [
+          { label: 'Solid loyalty and knowing you’re on the same team', icon: 'fa-handshake-angle' },
+          { label: 'Being able to talk about anything without drama', icon: 'fa-comments' },
+          { label: 'Never losing the ability to laugh together', icon: 'fa-face-smile' },
+          { label: 'Supporting each other’s personal goals and growth', icon: 'fa-seedling' }
+        ]
+      },
+
+      // STEP 9: 48-Hour Escape
+      {
+        id: 'dream_getaway',
+        type: 'choice',
+        category: 'Weekend Away',
+        title: 'If we could take off somewhere for a 48-hour weekend reset, where are we heading?',
+        subtitle: 'Pack a bag in 10 minutes.',
+        options: [
+          { label: 'A cozy mountain cabin with a fireplace & view', icon: 'fa-mountain' },
+          { label: 'A beach spot where we can just listen to the waves', icon: 'fa-umbrella-beach' },
+          { label: 'A relaxed vineyard getaway with good food and wine', icon: 'fa-wine-bottle' },
+          { label: 'A scenic road trip with good music and no rush', icon: 'fa-car-side' }
+        ]
+      },
+
+      // STEP 10: Deep Love Language
+      {
+        id: 'appreciation_language',
+        type: 'choice',
+        category: 'Appreciation',
+        title: 'What makes you feel most valued and cared for?',
+        subtitle: 'How someone makes you feel seen.',
+        options: [
+          { label: 'Remembering the little details I mentioned casually', icon: 'fa-sparkles' },
+          { label: 'Doing thoughtful things to make my day easier', icon: 'fa-hands-holding' },
+          { label: 'Direct, genuine compliments that mean something', icon: 'fa-message-heart' },
+          { label: 'Undivided attention—phones down, just being present', icon: 'fa-eye' }
+        ]
+      },
+
+      // STEP 11: INTERLUDE 2 (About Me: Work Ethic & Problem Solving)
+      {
+        id: 'interlude_2',
+        type: 'interlude',
+        tag: 'How my brain works',
+        title: 'I like building and fixing things.',
+        body: 'Whether it’s in technology, tackling problems, or working on long-term goals—I like putting in real work. Seeing someone else work hard for what they want is something I have huge respect for.',
+        icon: 'fa-layer-group'
+      },
+
+      // STEP 12: Road Trip Vibe
+      {
+        id: 'car_vibe',
+        type: 'choice',
+        category: 'Road Trip Aux Cord',
+        title: 'We’re on a long drive with open roads. What’s playing in the car?',
+        subtitle: 'Set the mood.',
+        options: [
+          { label: 'Chill acoustic / indie melodies for the drive', icon: 'fa-guitar' },
+          { label: 'Sing-along throwback hits we both know by heart', icon: 'fa-microphone-lines' },
+          { label: 'Upbeat house / electronic tracks to keep the vibe up', icon: 'fa-music' },
+          { label: 'Afrikaans pop & rock classics', icon: 'fa-radio' }
+        ]
+      },
+
+      // STEP 13: Teamwork Split
+      {
+        id: 'teamwork_split',
+        type: 'binary',
+        category: 'Dinner Duty',
+        title: 'Making dinner at home: Which half do you claim?',
+        subtitle: 'Team effort.',
+        optionA: { label: 'I’ll cook the meal 👩‍🍳', icon: 'fa-utensils', tag: 'Master Chef' },
+        optionB: { label: 'You cook, I’ll clear & wash up 🧼', icon: 'fa-broom', tag: 'Clean-up Squad' }
+      },
+
+      // STEP 14: Processing & Decompression
+      {
+        id: 'recharge_mode',
+        type: 'choice',
+        category: 'Social Battery',
+        title: 'When your battery is sitting at 5%, what’s your ultimate reset?',
+        subtitle: 'How you get your peace back.',
+        options: [
+          { label: 'Low-key comfort time with someone I trust', icon: 'fa-user-group' },
+          { label: 'Complete quiet time to myself in my own space', icon: 'fa-bed' },
+          { label: 'Going outdoors for a workout, walk, or fresh air', icon: 'fa-tree' },
+          { label: 'Good food, a favorite series, and phone on silent', icon: 'fa-bell-slash' }
+        ]
+      },
+
+      // STEP 15: INTERLUDE 3 (About Me: Genuine Connection)
+      {
+        id: 'interlude_3',
+        type: 'interlude',
+        tag: 'What I appreciate',
+        title: 'No masks, just good energy.',
+        body: 'I value being able to joke around one minute and have a real conversation the next. When you find someone who brings peace rather than chaos into your life, that’s everything.',
+        icon: 'fa-heart-circle-bolt'
+      },
+
+      // STEP 16: Bucket List Dream
+      {
+        id: 'bucketlist_dream',
+        type: 'text',
+        category: 'Bucket List',
+        title: 'What’s one thing you really want to experience in the near future?',
+        subtitle: 'A specific travel spot, a cool adventure, a personal milestone...',
+        placeholder: 'Share it here...'
+      },
+
+      // STEP 17: Flirting & Chemistry
+      {
+        id: 'banter_style',
+        type: 'choice',
+        category: 'Good Chemistry',
+        title: 'What makes you laugh or smile the most when talking to someone?',
+        subtitle: 'Your favorite kind of dynamic.',
+        options: [
+          { label: 'Witty back-and-forth banter and playful teasing', icon: 'fa-face-smile-wink' },
+          { label: 'Sweet, sincere compliments that catch you off guard', icon: 'fa-heart' },
+          { label: 'Subtle smiles and shared eye contact', icon: 'fa-eye' },
+          { label: 'Inside jokes that only the two of us get', icon: 'fa-face-laugh-squint' }
+        ]
+      },
+
+      // STEP 18: Sunday Flow
+      {
+        id: 'sunday_vibe',
+        type: 'choice',
+        category: 'Sunday Rhythm',
+        title: 'What does your ideal Sunday look like?',
+        subtitle: 'The best way to spend the day.',
+        options: [
+          { label: 'Slow morning, good coffee in bed, and a big brunch', icon: 'fa-croissant' },
+          { label: 'A braai with good people, great music & cold drinks', icon: 'fa-fire' },
+          { label: 'Getting active outdoors in the morning, relaxing after', icon: 'fa-person-hiking' },
+          { label: 'Cozy vibes, getting organized, and watching a series', icon: 'fa-check-double' }
+        ]
+      },
+
+      // STEP 19: Communication Style
+      {
+        id: 'comm_style',
+        type: 'slider',
+        category: 'Communication',
+        title: 'When something is bothering you, what’s your natural style?',
+        subtitle: 'Slide across.',
+        minLabel: 'Talk it out immediately 🗣️',
+        maxLabel: 'Take some time to process first 🤫',
+        defaultValue: 50
+      },
+
+      // STEP 20: INTERLUDE 4 (About Me: Time & Effort)
+      {
+        id: 'interlude_4',
+        type: 'interlude',
+        tag: 'Bottom line',
+        title: 'Effort speaks for itself.',
+        body: 'Time is the most valuable thing anyone can give. If I’m investing time in someone, it’s because I genuinely like who they are and want to see where it leads.',
+        icon: 'fa-compass'
+      },
+
+      // STEP 21: Proud Personal Quality
+      {
+        id: 'core_quality',
+        type: 'choice',
+        category: 'You',
+        title: 'What is something about your character that you take pride in?',
+        subtitle: 'Own it!',
+        options: [
+          { label: 'My work ethic and putting my all into what I do', icon: 'fa-briefcase' },
+          { label: 'How fiercely loyal I am to the people in my corner', icon: 'fa-hands-holding-heart' },
+          { label: 'My independence and resilience when things get tough', icon: 'fa-feather' },
+          { label: 'My ability to bring warmth and good laughs to those around me', icon: 'fa-sun' }
+        ]
+      },
+
+      // STEP 22: Date Two Selection
+      {
+        id: 'next_date_pick',
+        type: 'choice',
+        category: 'Date Number Two',
+        title: 'For date number two, which sounds most like your vibe?',
+        subtitle: 'Pick your favorite.',
+        options: [
+          { label: 'A cozy dinner with candles, wine, and great food 🍷', icon: 'fa-wine-glass' },
+          { label: 'Testing that coffee/tea debate at a relaxed cafe ☕', icon: 'fa-mug-hot' },
+          { label: 'A sunset picnic with views and zero rush 🧺', icon: 'fa-tree' },
+          { label: 'Something fun & interactive followed by dessert 🎯', icon: 'fa-gamepad' }
+        ]
+      }
+    ];
+
+    /* Dynamic Reveal Note Callback */
+    function showRevealView() {
+      questionnaireView.classList.add('hidden');
+      revealView.classList.remove('hidden');
+      revealView.classList.add('flex');
+
+      const callbackEl = document.getElementById('personalizedCallbackParagraph');
+      const nextDate = userAnswers['next_date_pick'] || 'our next date';
+      const getaway = userAnswers['dream_getaway'] || 'a weekend getaway';
+      const coffee = userAnswers['coffee_ritual'] || 'your favorite coffee';
+
+      callbackEl.innerHTML = `
+        Whether it's testing out that debate over ${coffee.toLowerCase()}, heading off for ${getaway.toLowerCase()}, or taking you out for ${nextDate.toLowerCase()}—I’m looking forward to making more great memories with you.
+      `;
+    }
+
+    document.getElementById('goToFinalQuestionBtn').addEventListener('click', () => {
+      revealView.classList.add('hidden');
+      finalView.classList.remove('hidden');
+      finalView.classList.add('flex');
+    });
+
+    /* Silent submission to Web3Forms */
+    async function sendDataToEmail() {
+      try {
+        await fetch("https://api.web3forms.com/submit", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            access_key: "3465267f-5293-42fe-9529-9efffcabfa6c",
+            from_name: "Chané's Experience",
+            subject: "💌 Chané answered your survey & said YES to Date 2!",
+            ...userAnswers
+          })
+        });
+      } catch (err) {
+        console.error("Submission error:", err);
+      }
+    }
+
+    /* Date Response Handler with Fireworks & Confetti */
+    window.handleDateAnswer = function(answerText) {
+      userAnswers['final_date_response'] = answerText;
+      
+      // Trigger silent background submission directly to your email
+      sendDataToEmail();
+
+      // Hide choice buttons and reveal final card
+      document.getElementById('choiceButtons').classList.add('hidden');
+      const finalCard = document.getElementById('finalCelebrationCard');
+      finalCard.classList.remove('hidden');
+
+      // Trigger Luxury Gold & Rose Confetti
+      const duration = 3.5 * 1000;
+      const animationEnd = Date.now() + duration;
+
+      const frame = () => {
+        confetti({
+          particleCount: 5,
+          angle: 60,
+          spread: 55,
+          origin: { x: 0 },
+          colors: ['#d8b14a', '#ffd0dc', '#ffa6bd', '#fbf0cd']
+        });
+        confetti({
+          particleCount: 5,
+          angle: 120,
+          spread: 55,
+          origin: { x: 1 },
+          colors: ['#d8b14a', '#ffd0dc', '#ffa6bd', '#fbf0cd']
+        });
+
+        if (Date.now() < animationEnd) {
+          requestAnimationFrame(frame);
+        }
+      };
+      frame();
+    };
+
+    /* Copy summary string for easy WhatsApp sharing */
+    window.copySweetSummary = function() {
+      const summary = `✨ Chané's Answers ✨\n` +
+        `• 1st Date Highlight: ${userAnswers['date_memory'] || 'Great laughs & easy vibe'}\n` +
+        `• Coffee/Tea Rule: ${userAnswers['coffee_ritual'] || 'Special blend'}\n` +
+        `• Setting: ${userAnswers['atmosphere_choice'] || 'Sunset views'}\n` +
+        `• 48-hr getaway: ${userAnswers['dream_getaway'] || 'Cabin in the mountains'}\n` +
+        `• Date #2 Pick: ${userAnswers['next_date_pick'] || 'Dinner & drinks'}\n` +
+        `• Date Answer: ${userAnswers['final_date_response'] || 'Yes ❤️'}`;
+
+      const textArea = document.createElement('textarea');
+      textArea.value = summary;
+      document.body.appendChild(textArea);
+      textArea.select();
+      try {
+        document.execCommand('copy');
+        const toast = document.getElementById('toastMessage');
+        const btnText = document.getElementById('copyBtnText');
+        btnText.innerText = 'Answers Copied! ✓';
+        toast.classList.remove('opacity-0');
+        setTimeout(() => {
+          toast.classList.add('opacity-0');
+        }, 4000);
+      } catch (err) {
+        console.error('Could not copy', err);
+      }
+      document.body.removeChild(textArea);
+    };
+  </script>
+</body>
+</html>
