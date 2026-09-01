@@ -355,8 +355,25 @@
   </footer>
 
   <script>
+    let currentStepIndex = 0;
+    const userAnswers = {};
+
+    const landingView = document.getElementById('landingView');
+    const questionnaireView = document.getElementById('questionnaireView');
+    const revealView = document.getElementById('revealView');
+    const finalView = document.getElementById('finalView');
+
+    const cardContainer = document.getElementById('cardContainer');
+    const stepCounter = document.getElementById('stepCounter');
+    const totalStepsCount = document.getElementById('totalStepsCount');
+    const progressBar = document.getElementById('progressBar');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const nextBtnText = document.getElementById('nextBtnText');
+    const startExperienceBtn = document.getElementById('startExperienceBtn');
+
     /* ==========================================================
-       3. REFINED NATURAL QUESTIONNAIRE DATASET
+       QUESTIONNAIRE DATASET
        ========================================================== */
     const storyFlow = [
       // STEP 1: Date Recap & Vibe
@@ -646,6 +663,219 @@
       }
     ];
 
+    totalStepsCount.innerText = storyFlow.length.toString().padStart(2, '0');
+
+    function renderCurrentStep() {
+      const step = storyFlow[currentStepIndex];
+      const stepNumberFormatted = (currentStepIndex + 1).toString().padStart(2, '0');
+      stepCounter.innerText = stepNumberFormatted;
+      
+      const progressPercent = ((currentStepIndex + 1) / storyFlow.length) * 100;
+      progressBar.style.width = `${progressPercent}%`;
+
+      prevBtn.disabled = currentStepIndex === 0;
+
+      if (currentStepIndex === storyFlow.length - 1) {
+        nextBtnText.innerText = 'See the Note';
+      } else {
+        nextBtnText.innerText = 'Continue';
+      }
+
+      let contentHTML = '';
+
+      if (step.type === 'choice') {
+        const savedAnswer = userAnswers[step.id];
+        contentHTML = `
+          <div>
+            <span class="inline-block px-3 py-1 rounded-full bg-champagne/10 border border-champagne/30 text-champagne text-[11px] uppercase tracking-widest font-semibold mb-3">
+              ${step.category}
+            </span>
+            <h2 class="font-serif text-2xl sm:text-3xl md:text-4xl text-white font-normal leading-snug mb-2">
+              ${step.title}
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-300 font-light mb-6">
+              ${step.subtitle}
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 my-auto">
+            ${step.options.map((opt, i) => {
+              const isSelected = savedAnswer === opt.label;
+              return `
+                <button type="button" onclick="selectChoiceOption('${step.id}', ${i})" class="choice-item glass-option text-left p-4 rounded-2xl flex items-center justify-between group cursor-pointer ${isSelected ? 'selected' : ''}">
+                  <div class="flex items-center gap-3.5">
+                    <div class="w-9 h-9 rounded-full bg-burgundy-900/80 border border-champagne/30 flex items-center justify-center text-champagne group-hover:scale-110 transition-transform">
+                      <i class="fa-solid ${opt.icon} text-sm"></i>
+                    </div>
+                    <span class="text-xs sm:text-sm text-slate-100 font-medium">${opt.label}</span>
+                  </div>
+                  <div class="w-5 h-5 rounded-full border border-champagne/40 flex items-center justify-center text-champagne transition-all ${isSelected ? 'bg-champagne text-noir font-bold' : 'opacity-40'}">
+                    <i class="fa-solid fa-check text-[10px] ${isSelected ? 'block' : 'hidden'}"></i>
+                  </div>
+                </button>
+              `;
+            }).join('')}
+          </div>
+          <div></div>
+        `;
+        nextBtn.disabled = !savedAnswer;
+
+      } else if (step.type === 'binary') {
+        const savedAnswer = userAnswers[step.id];
+        contentHTML = `
+          <div>
+            <span class="inline-block px-3 py-1 rounded-full bg-champagne/10 border border-champagne/30 text-champagne text-[11px] uppercase tracking-widest font-semibold mb-3">
+              ${step.category}
+            </span>
+            <h2 class="font-serif text-2xl sm:text-3xl md:text-4xl text-white font-normal leading-snug mb-2">
+              ${step.title}
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-300 font-light mb-6">
+              ${step.subtitle}
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 my-auto">
+            <button type="button" onclick="selectBinaryOption('${step.id}', '${step.optionA.label}')" class="glass-option p-6 rounded-2xl flex flex-col items-center justify-center text-center cursor-pointer group ${savedAnswer === step.optionA.label ? 'selected' : ''}">
+              <div class="w-14 h-14 rounded-full bg-burgundy-900/80 border border-champagne/40 flex items-center justify-center text-champagne mb-4 group-hover:scale-110 transition-transform">
+                <i class="fa-solid ${step.optionA.icon} text-2xl"></i>
+              </div>
+              <span class="text-sm sm:text-base text-white font-medium mb-1">${step.optionA.label}</span>
+              <span class="text-[11px] text-zinc-400 font-light">${step.optionA.tag}</span>
+            </button>
+
+            <button type="button" onclick="selectBinaryOption('${step.id}', '${step.optionB.label}')" class="glass-option p-6 rounded-2xl flex flex-col items-center justify-center text-center cursor-pointer group ${savedAnswer === step.optionB.label ? 'selected' : ''}">
+              <div class="w-14 h-14 rounded-full bg-burgundy-900/80 border border-champagne/40 flex items-center justify-center text-champagne mb-4 group-hover:scale-110 transition-transform">
+                <i class="fa-solid ${step.optionB.icon} text-2xl"></i>
+              </div>
+              <span class="text-sm sm:text-base text-white font-medium mb-1">${step.optionB.label}</span>
+              <span class="text-[11px] text-zinc-400 font-light">${step.optionB.tag}</span>
+            </button>
+          </div>
+          <div></div>
+        `;
+        nextBtn.disabled = !savedAnswer;
+
+      } else if (step.type === 'slider') {
+        const savedVal = userAnswers[step.id] || step.defaultValue;
+        userAnswers[step.id] = savedVal;
+        contentHTML = `
+          <div>
+            <span class="inline-block px-3 py-1 rounded-full bg-champagne/10 border border-champagne/30 text-champagne text-[11px] uppercase tracking-widest font-semibold mb-3">
+              ${step.category}
+            </span>
+            <h2 class="font-serif text-2xl sm:text-3xl md:text-4xl text-white font-normal leading-snug mb-2">
+              ${step.title}
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-300 font-light mb-6">
+              ${step.subtitle}
+            </p>
+          </div>
+
+          <div class="my-auto py-6 px-2">
+            <input type="range" min="0" max="100" value="${savedVal}" id="rangeSlider" oninput="handleSliderChange('${step.id}', this.value)" class="w-full cursor-pointer accent-champagne">
+            <div class="flex items-center justify-between text-xs sm:text-sm text-slate-300 font-light mt-6 px-1">
+              <span class="w-1/2 text-left pr-2">${step.minLabel}</span>
+              <span class="w-1/2 text-right pl-2">${step.maxLabel}</span>
+            </div>
+          </div>
+          <div></div>
+        `;
+        nextBtn.disabled = false;
+
+      } else if (step.type === 'text') {
+        const savedVal = userAnswers[step.id] || '';
+        contentHTML = `
+          <div>
+            <span class="inline-block px-3 py-1 rounded-full bg-champagne/10 border border-champagne/30 text-champagne text-[11px] uppercase tracking-widest font-semibold mb-3">
+              ${step.category}
+            </span>
+            <h2 class="font-serif text-2xl sm:text-3xl md:text-4xl text-white font-normal leading-snug mb-2">
+              ${step.title}
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-300 font-light mb-6">
+              ${step.subtitle}
+            </p>
+          </div>
+
+          <div class="my-auto">
+            <textarea id="textResponseInput" oninput="handleTextInput('${step.id}', this.value)" placeholder="${step.placeholder}" rows="3" class="w-full bg-burgundy-950/60 border border-champagne/30 focus:border-champagne rounded-2xl p-4 text-sm text-white placeholder:text-zinc-500 outline-none transition-all resize-none shadow-inner">${savedVal}</textarea>
+          </div>
+          <div></div>
+        `;
+        nextBtn.disabled = savedVal.trim().length === 0;
+
+      } else if (step.type === 'interlude') {
+        contentHTML = `
+          <div class="text-center py-4 my-auto">
+            <div class="w-16 h-16 rounded-full bg-burgundy-800/90 border border-champagne/40 mx-auto mb-5 flex items-center justify-center text-champagne shadow-lg">
+              <i class="fa-solid ${step.icon} text-2xl"></i>
+            </div>
+            <span class="inline-block px-3 py-1 rounded-full bg-champagne/10 border border-champagne/30 text-champagne text-[11px] uppercase tracking-widest font-semibold mb-3">
+              ${step.tag}
+            </span>
+            <h2 class="font-serif text-2xl sm:text-3xl md:text-4xl text-white font-normal mb-4">
+              ${step.title}
+            </h2>
+            <p class="text-sm sm:text-base text-slate-200 font-light leading-relaxed max-w-lg mx-auto">
+              ${step.body}
+            </p>
+          </div>
+          <div></div>
+        `;
+        nextBtn.disabled = false;
+      }
+
+      cardContainer.innerHTML = contentHTML;
+    }
+
+    window.selectChoiceOption = function(stepId, optionIdx) {
+      const step = storyFlow[currentStepIndex];
+      const selectedOption = step.options[optionIdx];
+      userAnswers[stepId] = selectedOption.label;
+      renderCurrentStep();
+    };
+
+    window.selectBinaryOption = function(stepId, label) {
+      userAnswers[stepId] = label;
+      renderCurrentStep();
+    };
+
+    window.handleSliderChange = function(stepId, value) {
+      userAnswers[stepId] = `${value}%`;
+    };
+
+    window.handleTextInput = function(stepId, value) {
+      userAnswers[stepId] = value;
+      nextBtn.disabled = value.trim().length === 0;
+    };
+
+    startExperienceBtn.addEventListener('click', () => {
+      landingView.classList.add('hidden');
+      questionnaireView.classList.remove('hidden');
+      questionnaireView.classList.add('flex');
+      if (!isAudioPlaying) {
+        toggleAmbientAudio();
+      }
+      renderCurrentStep();
+    });
+
+    prevBtn.addEventListener('click', () => {
+      if (currentStepIndex > 0) {
+        currentStepIndex--;
+        renderCurrentStep();
+      }
+    });
+
+    nextBtn.addEventListener('click', () => {
+      if (currentStepIndex < storyFlow.length - 1) {
+        currentStepIndex++;
+        renderCurrentStep();
+      } else {
+        showRevealView();
+      }
+    });
+
     /* Dynamic Reveal Note Callback */
     function showRevealView() {
       questionnaireView.classList.add('hidden');
@@ -753,6 +983,125 @@
       }
       document.body.removeChild(textArea);
     };
+
+    // Particle Canvas Animation
+    const canvas = document.getElementById('ambientCanvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    class Particle {
+      constructor() {
+        this.reset();
+      }
+      reset() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 1.8 + 0.5;
+        this.speedY = -(Math.random() * 0.35 + 0.1);
+        this.speedX = (Math.random() - 0.5) * 0.2;
+        this.alpha = Math.random() * 0.5 + 0.2;
+      }
+      update() {
+        this.y += this.speedY;
+        this.x += this.speedX;
+        if (this.y < 0) this.reset();
+      }
+      draw() {
+        ctx.fillStyle = `rgba(216, 177, 74, ${this.alpha})`;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    for (let i = 0; i < 45; i++) {
+      particles.push(new Particle());
+    }
+
+    function animateParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => {
+        p.update();
+        p.draw();
+      });
+      requestAnimationFrame(animateParticles);
+    }
+    animateParticles();
+
+    // Procedural Ambient Synthesizer
+    let audioCtx = null;
+    let isAudioPlaying = false;
+    let audioInterval = null;
+
+    const chords = [
+      [261.63, 329.63, 392.00, 493.88], // Cmaj7
+      [220.00, 261.63, 329.63, 392.00], // Am7
+      [174.61, 220.00, 261.63, 329.63], // Fmaj7
+      [196.00, 246.94, 293.66, 392.00]  // G7
+    ];
+    let chordIndex = 0;
+
+    function playWarmChord(freqs) {
+      if (!audioCtx || audioCtx.state !== 'running') return;
+      freqs.forEach((freq, idx) => {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+
+        gain.gain.setValueAtTime(0, audioCtx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.015, audioCtx.currentTime + 1.5 + idx * 0.2);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 5.5);
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        osc.start();
+        osc.stop(audioCtx.currentTime + 6.0);
+      });
+    }
+
+    function toggleAmbientAudio() {
+      const audioToggleBtn = document.getElementById('audioToggleBtn');
+      const audioIcon = document.getElementById('audioIcon');
+      const audioStatusText = document.getElementById('audioStatusText');
+      const audioPing = document.getElementById('audioPing');
+
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+
+      if (!isAudioPlaying) {
+        isAudioPlaying = true;
+        audioIcon.className = 'fa-solid fa-volume-high text-sm text-champagne';
+        audioStatusText.innerText = 'Music Playing';
+        audioPing.classList.remove('hidden');
+        playWarmChord(chords[chordIndex]);
+        audioInterval = setInterval(() => {
+          chordIndex = (chordIndex + 1) % chords.length;
+          playWarmChord(chords[chordIndex]);
+        }, 4500);
+      } else {
+        isAudioPlaying = false;
+        audioIcon.className = 'fa-solid fa-volume-xmark text-sm text-zinc-400';
+        audioStatusText.innerText = 'Music Off';
+        audioPing.classList.add('hidden');
+        clearInterval(audioInterval);
+      }
+    }
+
+    document.getElementById('audioToggleBtn').addEventListener('click', toggleAmbientAudio);
   </script>
 </body>
 </html>
